@@ -1,4 +1,4 @@
-/*
+/********************************************************************************
  * Step 1:
  * Most basic call to the API 
  */
@@ -9,7 +9,7 @@ function swapi1() {
   Logger.log(response.getContentText());
 }
 
-/*
+/********************************************************************************
  * Step 2:
  * Same basic call to the API 
  * Parse the JSON reply
@@ -29,7 +29,7 @@ function swapi2() {
 }
 
 
-/*
+/********************************************************************************
  * Step 3:
  * Same basic call to the API 
  * Parse the JSON reply
@@ -64,7 +64,7 @@ function swapi3() {
 
 
 
-/*
+/********************************************************************************
  * Step 4:
  * Same basic call to the API 
  * Parse the JSON reply
@@ -97,7 +97,7 @@ function swapi4() {
 }
 
 
-/*
+/********************************************************************************
  * Step 5:
  * Same basic call to the API 
  * Parse the JSON reply
@@ -119,7 +119,7 @@ function swapi5() {
 
 
 
-/*
+/********************************************************************************
  * Step 6:
  * Same basic call to the API 
  * Parse the JSON reply
@@ -141,6 +141,64 @@ function swapi6() {
   Logger.log("Climate of planet: " + data.climate);
   Logger.log("Terrain of planet: " + data.terrain);
   Logger.log("Population of planet: " + data.population);
+}
+
+
+/********************************************************************************
+ * Step 7:
+ * Same basic call to the API 
+ * Parse the JSON reply
+ * display the different parts of the JSON
+ */
+function swapi7() {
+  
+  // Call the Star Wars API
+  var response = UrlFetchApp.fetch("http://swapi.co/api/planets/");
+  
+  // Parse the JSON reply
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  
+  // Log all planet names from the api
+  for each (item in data["results"]) {
+    
+    Logger.log(item.name);
+  }
+  
+  //Logger.log(data["results"][0]);
+  //Logger.log(data["results"].length);
+}
+
+
+/********************************************************************************
+ * Step 8:
+ * Set up namespaces to get hold of info 
+ * Parse the JSON reply
+ * display the different parts of the JSON
+ */
+function planets() {
+  
+  // Call the Star Wars API
+  var response = UrlFetchApp.fetch("http://swapi.co/api/planets/");
+  
+  // Parse the JSON reply
+  var json = response.getContentText();
+  var planetData = JSON.parse(json);
+ 
+  return planetData;
+}
+
+
+function testAPI() {
+  
+  var planetData = planets();
+  
+  // Create array of all planet names from the api
+  var planetNames = [];
+  for each (item in planetData["results"]) {
+    planetNames.push(item.name);
+  }
+  Logger.log(planetNames);
 }
 
 
