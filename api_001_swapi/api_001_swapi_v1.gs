@@ -261,36 +261,27 @@ function getCategoryData() {
   var data = JSON.parse(json)["results"];
   
   // create array of the names for this category
-  var names = getCategoryNames(data);
+  var names = getCategoryNames(category,data);
   var categoryCount = names.length;
   Logger.log(names);
   Logger.log(categoryCount);
   
   // paste into our sheet as a drop down menu
   var workingsSheet = ss.getSheetByName("workings");
+  var maxRow = workingsSheet.getLastRow();
+  workingsSheet.getRange(13,2,maxRow).clearContent();
   workingsSheet.getRange(13, 2, categoryCount).setValues(names);
   
+  // change the cell in the drop down menu to be the first name of the new category list
+  var firstName = workingsSheet.getRange(13,2).getValue();
+  apiSheet.getRange(6,3).setValue(firstName);
   
-  //Logger.log(data);
-  
+  Logger.log(data);
   return data;
 
 }
 
-// function to create array of names within category based on data retrieved from the api
-function getCategoryNames(data) {
-  // create names array
-  var names = [];
-    
-  for each (item in data) {
-    names.push([item.name]);
-      //obj["name"] = item.name,
-      //obj["url"] = item.url
-      //);
-  }
-  
-  return names;
-}
+
 
 
 
