@@ -40,7 +40,8 @@ function swapiCategories() {
   
   // change the cell in the drop down menu to be the first name of the new category list
   var firstName = workingsSheet.getRange(13,2).getValue();
-  apiSheet.getRange(6,3).setValue(firstName)
+  apiSheet.getRange(6,3).setValue(firstName);
+  swapiDetail(); // run swapiDetail so that data displayed matches the first name
 }
 
 // get the items for a given category
@@ -82,15 +83,64 @@ function swapiDetail() {
   
   var itemData = catData[idx];
   
-  Logger.log(itemData);
-  // people:
-  // {films=[http://swapi.co/api/films/5/, http://swapi.co/api/films/6/, http://swapi.co/api/films/1/], 
-  // homeworld=http://swapi.co/api/planets/1/, gender=female, skin_color=light, edited=2014-12-20T21:17:50.319000Z, 
-  // created=2014-12-10T15:53:41.121000Z, mass=75, vehicles=[], url=http://swapi.co/api/people/7/, hair_color=brown, 
-  // birth_year=47BBY, eye_color=blue, species=[http://swapi.co/api/species/1/], starships=[], name=Beru Whitesun lars, height=165}
+  // call function to parse itemData and return selected data for that category item
+  // data required will be depedent on category of item e.g. people v planets
+  var itemDataForSheet = returnItemDetails(itemData,category);
+  
+  // paste into sheet, clear old details first
+  apiSheet.getRange(10,2,apiSheet.getLastRow(),2).clear();
+  apiSheet.getRange(10, 2, itemDataForSheet.length, 2).setValues(itemDataForSheet);
   
 }
 
+
+function returnItemDetails(itemData,category) {
+  
+  var data = [];
+  
+  if (category === 'films') {
+    // do something
+    data.push(["Title:",itemData["title"]]);
+    data.push(["Url:",itemData["url"]]);
+  }
+  else if (category === 'people') {
+    // people details
+    data.push(["Name:",itemData["name"]]);
+    data.push(["Height:",itemData["height"]]);
+    data.push(["Mass:",itemData["mass"]]);
+    data.push(["Hair Color:",itemData["hair_color"]]);
+    data.push(["Skin Color:",itemData["skin_color"]]);
+    data.push(["Eye Color:",itemData["eye_color"]]);
+    data.push(["Birth Year:",itemData["birth_year"]]);
+    data.push(["Gender:",itemData["gender"]]);
+    data.push(["Url:",itemData["url"]]);
+  }
+  else if (category === 'planets') {
+    // do something
+    data.push(["Name:",itemData["name"]]);
+    data.push(["Url:",itemData["url"]]);
+  }
+  else if (category === 'species') {
+    // do something
+    data.push(["Name:",itemData["name"]]);
+    data.push(["Url:",itemData["url"]]);
+  }
+  else if (category === 'starships') {
+    // do something
+    data.push(["Name:",itemData["name"]]);
+    data.push(["Url:",itemData["url"]]);
+  }
+  /*else if (category === 'vehicles') {
+    // do something
+    data.push(["Name:",itemData["name"]]);
+    data.push(["Url:",itemData["url"]]);
+  }*/
+  else {
+    data.push(["Error!"],["There has been a great disturbance in the force"]);
+  }
+  
+  return data;
+}
 
 // function to create array of names within category based on data retrieved from the api
 function getCategoryNames(category,data) {
@@ -105,6 +155,6 @@ function getCategoryNames(category,data) {
   return names;
 }
 
-// use the filter function to match the name chosen in the sheet
-// to the name in the data json object returned from the api
+
+
 // change to onedit trigger: https://developers.google.com/apps-script/guides/triggers/#onedit
