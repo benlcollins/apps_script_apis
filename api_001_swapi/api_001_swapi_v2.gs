@@ -66,6 +66,7 @@ function swapiDetail() {
   
   // call the api to get back all the data for that category
   var catData = categoryData(category);
+  Logger.log(catData[1]["name"]);
   var catNames = getCategoryNames(category,catData);
   
   // get the specific item chosen within this category
@@ -82,6 +83,12 @@ function swapiDetail() {
   }
   
   var itemData = catData[idx];
+  
+  Logger.log("filter");
+  
+  Logger.log(catNames.filter(function(elem) {
+    return elem[0] === item;
+  }));
   
   // call function to parse itemData and return selected data for that category item
   // data required will be depedent on category of item e.g. people v planets
