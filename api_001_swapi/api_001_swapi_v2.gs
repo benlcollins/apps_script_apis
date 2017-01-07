@@ -1,5 +1,10 @@
 /********************************************************************************
  * 
+ * API experiments 2017 #001
+ * Exploring the Star Wars API: http://swapi.co/api/
+ * Retrives Star Wars data and populates a Google Sheet
+ * Drop-down menu controls for user to choose categories/items
+ * 
  */
 
 function swapiCategories() {
