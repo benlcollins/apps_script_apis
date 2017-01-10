@@ -1,22 +1,35 @@
+function getApiKey() {
+  
+  // script properties service
+  // retrive copy of mailchimp api key
+  var properties = PropertiesService.getScriptProperties();
+  return properties.getProperty('apikey');
+}
+
+
 /*
- *
+ * Step 1:
  * Basic MailChimp API GET request
+ *
  * {list_id} the ID of your list in MailChimp
  * {apikey} your MailChimp API key
  *
  */
 
-function mailchimp() {
+function mailchimp1() {
+  
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
   
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
-  var endpoint = 'lists/{list_id}';
+  var endpoint = 'lists/77e612d207';
   
   var params = {
     'method': 'GET',
     'muteHttpExceptions': true,
     'headers': {
-      'Authorization': 'apikey {apikey}'
+      'Authorization': 'apikey ' + apikey
     }
   };
   
@@ -40,6 +53,9 @@ function mailchimp() {
  */
 function mailchimp2() {
   
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
+  
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
   var endpoint = 'lists/';
@@ -48,7 +64,7 @@ function mailchimp2() {
     'method': 'GET',
     'muteHttpExceptions': true,
     'headers': {
-      'Authorization': 'apikey {apikey}'
+      'Authorization': 'apikey ' + apikey
     }
   };
   
@@ -69,6 +85,9 @@ function mailchimp2() {
  */
 function mailchimp3() {
   
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
+  
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
   var endpoint = 'campaigns?count=20';
@@ -77,7 +96,7 @@ function mailchimp3() {
     'method': 'GET',
     'muteHttpExceptions': true,
     'headers': {
-      'Authorization': 'apikey {apikey}'
+      'Authorization': 'apikey ' + apikey
     }
   };
   
@@ -103,6 +122,9 @@ function mailchimp3() {
  */
 function mailchimp4(endpoint) {
   
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
+  
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
   var path = endpoint;
@@ -112,7 +134,7 @@ function mailchimp4(endpoint) {
     'method': 'GET',
     'muteHttpExceptions': true,
     'headers': {
-      'Authorization': 'apikey {apikey}'
+      'Authorization': 'apikey ' + apikey
     }
   };
   
@@ -125,8 +147,11 @@ function mailchimp4(endpoint) {
   return json[endpoint];
 }
 
-function getMailChimpData() {
-  //mailchimp3('lists');
+function getMailChimpCampaignData() {
+  
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
+  
   var campaigns = mailchimp4('campaigns');
   
   //Logger.log(campaigns[15]);
