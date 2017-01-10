@@ -25,5 +25,9 @@ function mailchimp() {
   var data = response.getContentText();
   var json = JSON.parse(data);
   
-  Logger.log(json);
+  // Log the list stats
+  Logger.log(json["stats"]);
+  
+  // Log the total number of people on the list
+  Logger.log("Total members on list: " + json["stats"]["member_count"]);
 }
