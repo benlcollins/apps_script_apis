@@ -7,10 +7,22 @@
  * 
  */
 
-function getApiKey() {
+
+// setup menu to run print Mailchimp function from Sheet
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+
+  ui.createMenu('MailChimp Menu')
+      .addItem('Get campaign data', 'printMailChimpData')
+      .addToUi();
   
-  // script properties service
-  // retrive copy of mailchimp api key
+}
+
+
+
+// script properties service
+// retrive copy of mailchimp api key
+function getApiKey() {  
   var properties = PropertiesService.getScriptProperties();
   return properties.getProperty('apikey');
 }
@@ -129,6 +141,8 @@ function mailchimp3() {
  * Step 4: general endpoint
  *
  */
+
+// generalized mailchimp api call
 function mailchimp4(endpoint) {
   
   // get mailchimp api key from properties service
@@ -156,6 +170,69 @@ function mailchimp4(endpoint) {
   return json[endpoint];
 }
 
+
+// get mailchimp campaign data v2
+function getMailChimpCampaignData2() {
+  
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
+  
+  var campaigns = mailchimp4('campaigns');
+  
+  var campaignData = [];
+  
+  // Add the campaign data to the array
+  for (var i = 0; i < campaigns.length; i++) {
+    
+    // put the campaign data into a double array for Google Sheets
+    if (campaigns[i]["emails_sent"] != 0) {
+      campaignData.push([
+        i,
+        campaigns[i]["send_time"].substr(0,10),
+        campaigns[i]["settings"]["title"],
+        campaigns[i]["settings"]["subject_line"],
+        campaigns[i]["recipients"]["recipient_count"],
+        campaigns[i]["emails_sent"],
+        campaigns[i]["report_summary"]["unique_opens"],
+        campaigns[i]["report_summary"]["clicks"]
+      ]);
+    }
+    else {
+      campaignData.push([
+        i,
+        "Not sent",
+        campaigns[i]["settings"]["title"],
+        campaigns[i]["settings"]["subject_line"],
+        campaigns[i]["recipients"]["recipient_count"],
+        campaigns[i]["emails_sent"],
+        "N/a",
+        "N/a"
+      ]);
+    }
+  }
+  
+  return campaignData;
+}
+
+
+function printMailChimpData() {
+  
+  var data = getMailChimpCampaignData2();
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  
+  var numRows = data.length;
+  var numCols = data[0].length;
+  
+  sheet.getRange(4,1,numRows,numCols).setValues(data);
+  
+}
+
+
+
+
+// get mailchimp campaign data v1
 function getMailChimpCampaignData1() {
   
   // get mailchimp api key from properties service
