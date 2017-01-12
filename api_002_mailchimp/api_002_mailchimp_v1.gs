@@ -1,3 +1,12 @@
+/********************************************************************************
+ * 
+ * API experiments 2017 #002
+ * Exploring the MailChimp API
+ * Retrives MailChimp data and populates a Google Sheet
+ * Drop-down menu controls for user to choose categories/items
+ * 
+ */
+
 function getApiKey() {
   
   // script properties service
@@ -147,7 +156,7 @@ function mailchimp4(endpoint) {
   return json[endpoint];
 }
 
-function getMailChimpCampaignData() {
+function getMailChimpCampaignData1() {
   
   // get mailchimp api key from properties service
   var apikey = getApiKey();
@@ -160,6 +169,7 @@ function getMailChimpCampaignData() {
   for (var i = 0; i < campaigns.length; i++) {
     //Logger.log("i: " + i);
     (campaigns[i]["settings"]["title"]) ? Logger.log("Campaign title: " + campaigns[i]["settings"]["title"]) : Logger.log("No title");
+    (campaigns[i]["send_time"]) ? Logger.log("Send time: " + campaigns[i]["send_time"]) : Logger.log("No emails sent");
     (campaigns[i]["settings"]["subject_line"]) ? Logger.log("Campaign: " + campaigns[i]["settings"]["subject_line"]) : Logger.log("No subject line recorded");
     (campaigns[i]["recipients"]["recipient_count"]) ? Logger.log("Recipient count: " + campaigns[i]["recipients"]["recipient_count"]) : Logger.log("No recipient count");
     (campaigns[i]["emails_sent"]) ? Logger.log("Emails sent: " + campaigns[i]["emails_sent"]) : Logger.log("No emails sent");
