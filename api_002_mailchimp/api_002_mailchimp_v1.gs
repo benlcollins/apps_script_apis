@@ -193,8 +193,8 @@ function getMailChimpCampaignData2() {
         campaigns[i]["settings"]["subject_line"],
         campaigns[i]["recipients"]["recipient_count"],
         campaigns[i]["emails_sent"],
-        campaigns[i]["report_summary"]["unique_opens"],
-        campaigns[i]["report_summary"]["clicks"]
+        (campaigns[i]["report_summary"]) ? campaigns[i]["report_summary"]["unique_opens"] : 0,  
+        (campaigns[i]["report_summary"]) ? campaigns[i]["report_summary"]["clicks"] : 0
       ]);
     }
     else {
@@ -215,6 +215,7 @@ function getMailChimpCampaignData2() {
 }
 
 
+// add the campaign data to our sheet
 function printMailChimpData() {
   
   var data = getMailChimpCampaignData2();
@@ -227,6 +228,18 @@ function printMailChimpData() {
   
   sheet.getRange(4,1,numRows,numCols).setValues(data);
   
+}
+
+
+// add new email subscribers to MailChimp
+function addMailChimpSubscribers() {
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  
+  var email = sheet.getRange(2, 1).getValue();
+  
+  Logger.log(email);
 }
 
 
