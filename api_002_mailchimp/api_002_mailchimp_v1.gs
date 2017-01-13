@@ -335,6 +335,16 @@ function importEmailsMailChimp() {
   
 }
 
+// Feature requests:
+//
+// log time and details of imports, e.g. how many emails
+// send email summary after import is finished, e.g. 73 emails were successfully imported
+// http://developer.mailchimp.com/documentation/mailchimp/reference/lists/#create-post_lists_list_id
+// use response data including error data to build report
+// split up if more than 500 emails
+
+
+
 
 // get mailchimp campaign data v1
 function getMailChimpCampaignData1() {
