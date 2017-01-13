@@ -27,6 +27,11 @@ function getApiKey() {
   return properties.getProperty('apikey');
 }
 
+function getListID() {  
+  var properties = PropertiesService.getScriptProperties();
+  return properties.getProperty('listID');
+}
+
 
 /*
  * Step 1:
@@ -44,7 +49,8 @@ function mailchimp1() {
   
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
-  var endpoint = 'lists/77e612d207';
+  var listID = getListID();
+  var endpoint = 'lists/' + listID;
   
   var params = {
     'method': 'GET',
@@ -231,8 +237,8 @@ function printMailChimpData() {
 }
 
 
-// add new email subscribers to MailChimp
-function addMailChimpSubscribers() {
+// get new email subscribers from Sheet
+function getSubscribers() {
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
@@ -240,9 +246,58 @@ function addMailChimpSubscribers() {
   var email = sheet.getRange(2, 1).getValue();
   
   Logger.log(email);
+  return email;
 }
 
-
+/*
+// add new email subs to MailChimp
+function importEmailsMailChimp() {
+  
+  var emails = getSubscribers();
+  
+  // get mailchimp api key from properties service
+  var apikey = getApiKey();
+  
+  // URL and params for the Mailchimp API
+  var root = 'https://us11.api.mailchimp.com/3.0/';
+  
+  
+  
+  
+  
+  
+  
+  // Make a POST request with a JSON payload.
+  var data = {
+    'name': 'Ben Collins',
+    'email': 'benlcollins2@gmail.com',
+    'pets': ['fido', 'fluffy']
+  };
+  var options = {
+    'method' : 'post',
+    'contentType': 'application/json',
+    // Convert the JavaScript object to a JSON string.
+    'payload' : JSON.stringify(data)
+  };
+  UrlFetchApp.fetch('https://httpbin.org/post', options);
+  
+  
+  
+  
+  
+  var path = endpoint;
+  var query = '?count=30';
+  
+  var params = {
+    'method': 'GET',
+    'muteHttpExceptions': true,
+    'headers': {
+      'Authorization': 'apikey ' + apikey
+    }
+  };
+  
+}
+*/
 
 
 // get mailchimp campaign data v1
