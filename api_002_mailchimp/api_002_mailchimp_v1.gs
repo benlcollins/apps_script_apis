@@ -249,7 +249,7 @@ function getSubscribers() {
   return email;
 }
 
-/*
+
 // add new email subs to MailChimp
 function importEmailsMailChimp() {
   
@@ -260,44 +260,30 @@ function importEmailsMailChimp() {
   
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
+  var listID = getListID();
+  var path = '/lists/' + listID + '/members';
   
-  
-  
-  
-  
-  
-  
-  // Make a POST request with a JSON payload.
+  // Data for POST request with a JSON payload
+  // add first and last names?
   var data = {
-    'name': 'Ben Collins',
-    'email': 'benlcollins2@gmail.com',
-    'pets': ['fido', 'fluffy']
+    'email_address': 'benlcollins2@gmail.com',
+    'status': 'subscribed'
   };
+  
   var options = {
     'method' : 'post',
     'contentType': 'application/json',
     // Convert the JavaScript object to a JSON string.
-    'payload' : JSON.stringify(data)
-  };
-  UrlFetchApp.fetch('https://httpbin.org/post', options);
-  
-  
-  
-  
-  
-  var path = endpoint;
-  var query = '?count=30';
-  
-  var params = {
-    'method': 'GET',
+    'payload' : JSON.stringify(data),
     'muteHttpExceptions': true,
     'headers': {
       'Authorization': 'apikey ' + apikey
     }
   };
   
+  UrlFetchApp.fetch(root + path, options); // POST emails to mailchimp
+  
 }
-*/
 
 
 // get mailchimp campaign data v1
