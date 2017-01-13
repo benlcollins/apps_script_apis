@@ -316,11 +316,7 @@ function importEmailsMailChimp() {
   var options = {
     'method' : 'post',
     'contentType': 'application/json',
-    // Convert the JavaScript object to a JSON string.
     'payload': payloadData,
-    /*'payload' : {
-      'members' : JSON.stringify(emailData)
-    },*/
     'muteHttpExceptions': true,
     'headers': {
       'Authorization': 'apikey ' + apikey
