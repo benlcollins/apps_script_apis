@@ -13,9 +13,10 @@ function onOpen() {
   var ui = SpreadsheetApp.getUi();
 
   ui.createMenu('MailChimp Menu')
-      .addItem('Get campaign data', 'printMailChimpData')
-      .addToUi();
-  
+    .addItem('Get campaign data', 'printMailChimpData')
+    .addItem('Import emails', 'importEmailsMailChimp')
+    .addToUi();
+
 }
 
 
@@ -236,24 +237,73 @@ function printMailChimpData() {
   
 }
 
+/*
+// data format required for api
+
+var data = [
+  {
+    'email_address': 'benlcollins2@gmail.com',
+    'status': 'subscribed'
+  },
+  { 
+    'email_address': 'benlcollins2@gmail.com',
+    'status': 'subscribed'
+  }
+];
+*/
 
 // get new email subscribers from Sheet
 function getSubscribers() {
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
+  var numEmails = sheet.getLastRow()-1;
   
-  var email = sheet.getRange(2, 1).getValue();
+  var emails = sheet.getRange(2, 1, numEmails, 1).getValues();
   
-  Logger.log(email);
-  return email;
+  var emailsArray = emails.map(function(elem) {
+    return { 
+      'email_address' : elem[0], 
+      'status' : 'subscribed' 
+    };
+  });
+  
+  /*
+  emailsArray = [
+    {email_address=benlcollins2@gmail.com, status=subscribed}, 
+    {email_address=bcollins541@yahoo.com, status=subscribed}, 
+    {email_address=bcollins542@yahoo.com, status=subscribed}
+  ]
+  */
+  
+  Logger.log(typeof emailsArray);
+  return emailsArray;
 }
 
 
 // add new email subs to MailChimp
 function importEmailsMailChimp() {
   
-  var emails = getSubscribers();
+  var emailData = getSubscribers();
+  
+  Logger.log(emailData);
+  
+  var data = {
+    'members': emailData
+  };
+  
+  var payloadData = JSON.stringify(data);
+  
+  Logger.log(payloadData);
+ /*
+  {
+    "members": [
+      {"email_address":"benlcollins2@gmail.com","status":"subscribed"},
+      {"email_address":"bcollins541@yahoo.com","status":"subscribed"},
+      {"email_address":"bcollins542@yahoo.com","status":"subscribed"}
+    ]
+  }
+  */
   
   // get mailchimp api key from properties service
   var apikey = getApiKey();
@@ -261,27 +311,27 @@ function importEmailsMailChimp() {
   // URL and params for the Mailchimp API
   var root = 'https://us11.api.mailchimp.com/3.0/';
   var listID = getListID();
-  var path = '/lists/' + listID + '/members';
-  
-  // Data for POST request with a JSON payload
-  // add first and last names?
-  var data = {
-    'email_address': 'benlcollins2@gmail.com',
-    'status': 'subscribed'
-  };
+  var path = '/lists/' + listID;  // for batch upload of subs. For single upload, also add '/members'
   
   var options = {
     'method' : 'post',
     'contentType': 'application/json',
     // Convert the JavaScript object to a JSON string.
-    'payload' : JSON.stringify(data),
+    'payload': payloadData,
+    /*'payload' : {
+      'members' : JSON.stringify(emailData)
+    },*/
     'muteHttpExceptions': true,
     'headers': {
       'Authorization': 'apikey ' + apikey
     }
   };
   
-  UrlFetchApp.fetch(root + path, options); // POST emails to mailchimp
+  var response = UrlFetchApp.fetch(root + path, options); // POST emails to mailchimp
+  var responseData = response.getContentText();
+  var json = JSON.parse(responseData);
+  
+  Logger.log(json);
   
 }
 
