@@ -228,7 +228,7 @@ function printMailChimpData() {
   var data = getMailChimpCampaignData2();
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getActiveSheet();
+  var sheet = ss.getSheetByName('Campaign Analysis');
   
   var numRows = data.length;
   var numCols = data[0].length;
@@ -256,7 +256,7 @@ var data = [
 function getSubscribers() {
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getActiveSheet();
+  var sheet = ss.getSheetByName('Email Import');
   var numEmails = sheet.getLastRow()-1;
   
   var emails = sheet.getRange(2, 1, numEmails, 1).getValues();
@@ -327,13 +327,61 @@ function importEmailsMailChimp() {
   var responseData = response.getContentText();
   var json = JSON.parse(responseData);
   
-  Logger.log(json);
+  //Logger.log(json);
+  
+  var chimpLog = logMailChimpImport(json);
+  
+  Logger.log(chimpLog);
+  
+  printMailChimpLog(chimpLog);
+  
+  
+  //return json;
   
 }
 
+
+// log time and details of imports, e.g. how many emails
+function logMailChimpImport(response) {
+  
+  var timestamp = new Date();
+  
+  var mailchimpLog = [
+    timestamp,
+    response['total_created'],
+    response['total_updated'],
+    response['error_count'],
+    response['errors'][0]
+  ];
+  
+  return mailchimpLog;
+}
+
+// print the import log into the Google Sheet
+function printMailChimpLog(chimpLog) {
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var logSheet = ss.getSheetByName('Import Log');
+  
+  Logger.log(typeof chimpLog);
+  Logger.log(chimpLog)
+  
+  logSheet.appendRow(chimpLog);
+  
+}
+
+/*
+
+total_updated
+new_members=[], 
+  updated_members=[], 
+    total_created=0, 
+      error_count=3, 
+        errors
+*/
+
 // Feature requests:
 //
-// log time and details of imports, e.g. how many emails
 // send email summary after import is finished, e.g. 73 emails were successfully imported
 // http://developer.mailchimp.com/documentation/mailchimp/reference/lists/#create-post_lists_list_id
 // use response data including error data to build report
