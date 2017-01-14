@@ -235,6 +235,14 @@ function printMailChimpData() {
   
   sheet.getRange(4,1,numRows,numCols).setValues(data);
   
+  for (var i = 0; i < numRows; i++) {
+    sheet.getRange(4+i,9).setFormulaR1C1('=iferror(text(R[0]C[-2]/R[0]C[-3],"0.0%"),"N/a")');
+    sheet.getRange(4+i,10).setFormulaR1C1('=iferror(text(R[0]C[-2]/R[0]C[-4],"0.0%"),"N/a")');
+  }
+  
+  sheet.getRange(4,1,numRows,2).setHorizontalAlignment("center");
+  sheet.getRange(4,5,numRows,6).setHorizontalAlignment("center");
+ 
 }
 
 /*
