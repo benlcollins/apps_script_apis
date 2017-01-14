@@ -294,7 +294,7 @@ function importEmailsMailChimp() {
   
   var emailData = getSubscribers();
   
-  Logger.log(emailData);
+  //Logger.log(emailData);
   
   var data = {
     'members': emailData
@@ -302,7 +302,7 @@ function importEmailsMailChimp() {
   
   var payloadData = JSON.stringify(data);
   
-  Logger.log(payloadData);
+  //Logger.log(payloadData);
  /*
   {
     "members": [
@@ -339,9 +339,15 @@ function importEmailsMailChimp() {
   
   var chimpLog = logMailChimpImport(json);
   
-  Logger.log(chimpLog);
+  //Logger.log("this is it here:");
+  //Logger.log(chimpLog);
+  
+  // [Fri Jan 13 22:38:43 GMT-05:00 2017, 0, 0, 3, {email_address=benlcollins2@gmail.com, 
+  // error=benlcollins2@gmail.com is already a list member, do you want to update? please provide update_existing:true in the request body}]
   
   printMailChimpLog(chimpLog);
+  
+  emailMailChimpLog(chimpLog);
   
   
   //return json;
@@ -371,22 +377,30 @@ function printMailChimpLog(chimpLog) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var logSheet = ss.getSheetByName('Import Log');
   
-  Logger.log(typeof chimpLog);
-  Logger.log(chimpLog)
+  //Logger.log(typeof chimpLog);
+  //Logger.log(chimpLog)
   
   logSheet.appendRow(chimpLog);
   
 }
 
-/*
 
-total_updated
-new_members=[], 
-  updated_members=[], 
-    total_created=0, 
-      error_count=3, 
-        errors
-*/
+function emailMailChimpLog(data) {
+  
+  Logger.log('working');
+  Logger.log(data);
+  
+  var body = 'Time of import ' + data[0].toLocaleString() + '\n'
+             + 'Total subscribers created: ' + data[1] + '\n'
+             + 'Total subscribers updated: ' + data[2] + '\n'
+             + 'Total error count: ' + data[3] + '\n'
+             + 'Example error: ' + data[4]["error"];
+  
+  var admin = 'benlcollins@gmail.com';
+  
+  GmailApp.sendEmail(admin, 'Your mailchimp import has finished - status inside', body);
+  
+}
 
 // Feature requests:
 //
