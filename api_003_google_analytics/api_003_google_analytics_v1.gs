@@ -25,15 +25,16 @@ function gaReport() {
   var tableId  = 'ga:' + profileId;
   var metric = 'ga:visits';
   var options = {
-    'dimensions': 'ga:source,ga:keyword',
-    'sort': '-ga:visits,ga:source',
+    'dimensions': 'ga:deviceCategory',
+    'sort': '-ga:visits',
     'filters': 'ga:medium==organic',
-    'max-results': 25
+    'max-results': 25  // actually redundant in this example with deviceCategory
   };
   
   var report = Analytics.Data.Ga.get(tableId, startDate, endDate, metric,
       options);
   
-  Logger.log(report);
+  Logger.log(report["rows"]);
+  // [[desktop, 4215], [mobile, 224], [tablet, 57]]
   
 }
