@@ -57,7 +57,7 @@ function getDates() {
       return [today, new Date(today.getFullYear(),0,1)];
     },
     'Last Year': function() {
-      return [today, startDateCalculator(14)];
+      return [new Date(today.getFullYear()-1,11,31), new Date(today.getFullYear()-1,0,1)];
     },
     'Custom Range': function() {
       var startDateChosen = sheet.getRange(9,2).getValue();
