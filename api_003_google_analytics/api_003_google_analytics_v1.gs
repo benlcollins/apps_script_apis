@@ -73,6 +73,14 @@ function getDates() {
   Logger.log(chosenPeriod);
   Logger.log(periods[chosenPeriod]());
   
+  var startDateTZ = Utilities.formatDate(periods[chosenPeriod]()[0], Session.getScriptTimeZone(),
+      'yyyy-MM-dd');
+  
+  var endDateTZ = Utilities.formatDate(periods[chosenPeriod]()[1], Session.getScriptTimeZone(),
+      'yyyy-MM-dd');
+  
+  return [chosenPeriod,startDateTZ,endDateTZ];
+  
 }
 
   
@@ -115,16 +123,18 @@ function gaReport() {
   
   var profileId = getProfileId();
   
-  var today = new Date();
-  var oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  //var today = new Date();
+  //var oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  var startDate = Utilities.formatDate(oneWeekAgo, Session.getScriptTimeZone(),
-      'yyyy-MM-dd');
+  //var startDate = Utilities.formatDate(oneWeekAgo, Session.getScriptTimeZone(),'yyyy-MM-dd');
   
   
   
-  var endDate = Utilities.formatDate(today, Session.getScriptTimeZone(),
-      'yyyy-MM-dd');
+  //var endDate = Utilities.formatDate(today, Session.getScriptTimeZone(),'yyyy-MM-dd');
+  
+  var chosenDateRange = getDates()[0];
+  var startDate = getDates()[1];
+  var endDate = getDates()[2];
 
   var tableId  = 'ga:' + profileId;
   var metric = 'ga:visits';
@@ -144,14 +154,14 @@ function gaReport() {
   // start-date=2017-01-08, sort=[-ga:visits], filters=ga:medium==organic, 
   // metrics=[ga:visits], dimensions=ga:deviceCategory}
   
-  displayGAData(report);
+  displayGAData(chosenDateRange,report);
   
   
 }
 
 
 // display output in Google Sheet
-function displayGAData(data) {
+function displayGAData(dateRange,data) {
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Output");
@@ -163,6 +173,7 @@ function displayGAData(data) {
     data["query"]["dimensions"],
     data["query"]["metrics"][0],
     data["query"]["filters"],
+    dateRange,
     data["query"]["start-date"],
     data["query"]["end-date"],
     data["rows"][0][1],
