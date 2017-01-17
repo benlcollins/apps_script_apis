@@ -26,6 +26,53 @@ function getProfileId() {
   return properties.getProperty('gaProfileId');
 }
 
+// get the dates from the Sheet
+function getDates() {
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("workings");
+  
+  var chosenPeriod = sheet.getRange(7,2).getValue();
+  var today = new Date();
+  
+  // use Object literal approach instead of switch or if/else for this lookup
+  var startDateCalculator = function(n) {  
+    return new Date(today.getTime() - n * 24 * 60 * 60 * 1000);
+  }
+  
+  var periods = {
+    'Last 7 days': function() {
+      return [today, startDateCalculator(7)];
+    },
+    'Last 14 days': function() {
+      return [today, startDateCalculator(14)];
+    },
+    'Last 30 days': function() {
+      return [today, startDateCalculator(30)];
+    },
+    'Last Quarter': function() {
+      return [today, startDateCalculator(14)];
+    },
+    'Year To Date': function() {
+      return [today, new Date(today.getFullYear(),0,1)];
+    },
+    'Last Year': function() {
+      return [today, startDateCalculator(14)];
+    },
+    'Custom Range': function() {
+      var startDateChosen = sheet.getRange(9,2).getValue();
+      var endDateChosen = sheet.getRange(10,2).getValue();
+      return [startDateChosen,endDateChosen];
+    }
+  };
+  
+  
+  
+  Logger.log(chosenPeriod);
+  Logger.log(periods[chosenPeriod]());
+  
+}
+
 
 // run Google Analytics report
 function gaReport() {
