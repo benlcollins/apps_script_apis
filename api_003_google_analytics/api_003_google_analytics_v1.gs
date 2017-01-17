@@ -51,7 +51,9 @@ function getDates() {
       return [today, startDateCalculator(30)];
     },
     'Last Quarter': function() {
-      return [today, startDateCalculator(14)];
+      Logger.log(today);
+      return getPreviousQuarter(today);
+      //return [today, startDateCalculator(14)];
     },
     'Year To Date': function() {
       return [today, new Date(today.getFullYear(),0,1)];
@@ -71,6 +73,40 @@ function getDates() {
   Logger.log(chosenPeriod);
   Logger.log(periods[chosenPeriod]());
   
+}
+
+  
+  
+  
+// find out which quarter the date is in
+// return the two dates of the previous full quarter
+function getPreviousQuarter(date) {
+  
+  var startQuarter, endQuarter;
+  var quarter = Math.ceil((date.getMonth() + 1)/ 3);
+  
+  //Logger.log(quarter);
+  
+  switch (quarter) {
+    case 1.0:
+      startQuarter = new Date(date.getFullYear() - 1,9,1);
+      endQuarter = new Date(date.getFullYear() - 1,11,31);
+      break;
+    case 2.0:
+      startQuarter = new Date(date.getFullYear(),0,1);
+      endQuarter = new Date(date.getFullYear(),2,31);
+      break;
+    case 3.0:
+      startQuarter = new Date(date.getFullYear(),3,1);
+      endQuarter = new Date(date.getFullYear(),5,30);
+      break;
+    case 4.0:
+      startQuarter = new Date(date.getFullYear(),6,1);
+      endQuarter = new Date(date.getFullYear(),8,30);
+  }
+  
+  //Logger.log([startQuarter,endQuarter]);
+  return [startQuarter,endQuarter];
 }
 
 
