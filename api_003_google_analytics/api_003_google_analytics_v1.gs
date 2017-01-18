@@ -51,9 +51,9 @@ function getDates() {
       return [chosenPeriod, startDateCalculator(30), today];
     },
     'Last Quarter': function() {
-      Logger.log(today);
-      return getPreviousQuarter(today).unshift(chosenPeriod);
-      //return [today, startDateCalculator(14)];
+      var newArr = getPreviousQuarter(today)
+      newArr.unshift(chosenPeriod);
+      return newArr;
     },
     'Year To Date': function() {
       return [chosenPeriod, new Date(today.getFullYear(),0,1), today];
@@ -67,6 +67,8 @@ function getDates() {
       if (endDateChosen < startDateChosen) {
         
         // To Do: refactor this part of the application
+        // still getting this error:
+        // TypeError: Cannot read property "0" from undefined.
         Browser.msgBox("End date cannot precede Start date", Browser.Buttons.OK);
         return [chosenPeriod, startDateChosen, startDateChosen]
       }
@@ -79,8 +81,6 @@ function getDates() {
   return periods[chosenPeriod]();
   
 }
-
-  
   
   
 // find out which quarter the date is in
