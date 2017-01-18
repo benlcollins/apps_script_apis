@@ -42,13 +42,13 @@ function getDates() {
   
   var periods = {
     'Last 7 days': function() {
-      return [today, startDateCalculator(7)];
+      return [startDateCalculator(7), today];
     },
     'Last 14 days': function() {
-      return [today, startDateCalculator(14)];
+      return [startDateCalculator(14), today];
     },
     'Last 30 days': function() {
-      return [today, startDateCalculator(30)];
+      return [startDateCalculator(30), today];
     },
     'Last Quarter': function() {
       Logger.log(today);
@@ -56,10 +56,10 @@ function getDates() {
       //return [today, startDateCalculator(14)];
     },
     'Year To Date': function() {
-      return [today, new Date(today.getFullYear(),0,1)];
+      return [new Date(today.getFullYear(),0,1), today];
     },
     'Last Year': function() {
-      return [new Date(today.getFullYear()-1,11,31), new Date(today.getFullYear()-1,0,1)];
+      return [new Date(today.getFullYear()-1,0,1), new Date(today.getFullYear()-1,11,31)];
     },
     'Custom Range': function() {
       var startDateChosen = sheet.getRange(9,2).getValue();
