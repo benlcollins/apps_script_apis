@@ -77,18 +77,6 @@ function getDates() {
   };
   
   return periods[chosenPeriod]();
-  /*
-  Logger.log(chosenPeriod);
-  Logger.log();
-  
-  var startDateTZ = Utilities.formatDate(periods[chosenPeriod]()[0], Session.getScriptTimeZone(),
-      'yyyy-MM-dd');
-  
-  var endDateTZ = Utilities.formatDate(periods[chosenPeriod]()[1], Session.getScriptTimeZone(),
-      'yyyy-MM-dd');
-  
-  return [chosenPeriod,startDateTZ,endDateTZ];
-  */
   
 }
 
@@ -130,18 +118,7 @@ function getPreviousQuarter(date) {
 // run Google Analytics report
 function gaReport() {
   
-  var profileId = getProfileId();
-  
-  //var today = new Date();
-  //var oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-  //var startDate = Utilities.formatDate(oneWeekAgo, Session.getScriptTimeZone(),'yyyy-MM-dd');
-  
-  
-  
-  //var endDate = Utilities.formatDate(today, Session.getScriptTimeZone(),'yyyy-MM-dd');
-  Logger.log(getDates());
-  
+  var profileId = getProfileId();  
   var chosenDateRange = getDates()[0];
   var startDate = Utilities.formatDate(getDates()[1], Session.getScriptTimeZone(),'yyyy-MM-dd');
   var endDate = Utilities.formatDate(getDates()[2], Session.getScriptTimeZone(),'yyyy-MM-dd');
