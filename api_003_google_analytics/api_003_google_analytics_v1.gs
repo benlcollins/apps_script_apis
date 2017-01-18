@@ -42,36 +42,44 @@ function getDates() {
   
   var periods = {
     'Last 7 days': function() {
-      return [startDateCalculator(7), today];
+      return [chosenPeriod, startDateCalculator(7), today];
     },
     'Last 14 days': function() {
-      return [startDateCalculator(14), today];
+      return [chosenPeriod, startDateCalculator(14), today];
     },
     'Last 30 days': function() {
-      return [startDateCalculator(30), today];
+      return [chosenPeriod, startDateCalculator(30), today];
     },
     'Last Quarter': function() {
       Logger.log(today);
-      return getPreviousQuarter(today);
+      return getPreviousQuarter(today).unshift(chosenPeriod);
       //return [today, startDateCalculator(14)];
     },
     'Year To Date': function() {
-      return [new Date(today.getFullYear(),0,1), today];
+      return [chosenPeriod, new Date(today.getFullYear(),0,1), today];
     },
     'Last Year': function() {
-      return [new Date(today.getFullYear()-1,0,1), new Date(today.getFullYear()-1,11,31)];
+      return [chosenPeriod, new Date(today.getFullYear()-1,0,1), new Date(today.getFullYear()-1,11,31)];
     },
     'Custom Range': function() {
       var startDateChosen = sheet.getRange(9,2).getValue();
       var endDateChosen = sheet.getRange(10,2).getValue();
-      return [startDateChosen,endDateChosen];
+      if (endDateChosen < startDateChosen) {
+        
+        // To Do: refactor this part of the application
+        Browser.msgBox("End date cannot precede Start date", Browser.Buttons.OK);
+        return [chosenPeriod, startDateChosen, startDateChosen]
+      }
+      else {
+        return [chosenPeriod, startDateChosen,endDateChosen];
+      }
     }
   };
   
-  
-  
+  return periods[chosenPeriod]();
+  /*
   Logger.log(chosenPeriod);
-  Logger.log(periods[chosenPeriod]());
+  Logger.log();
   
   var startDateTZ = Utilities.formatDate(periods[chosenPeriod]()[0], Session.getScriptTimeZone(),
       'yyyy-MM-dd');
@@ -80,6 +88,7 @@ function getDates() {
       'yyyy-MM-dd');
   
   return [chosenPeriod,startDateTZ,endDateTZ];
+  */
   
 }
 
@@ -131,10 +140,11 @@ function gaReport() {
   
   
   //var endDate = Utilities.formatDate(today, Session.getScriptTimeZone(),'yyyy-MM-dd');
+  Logger.log(getDates());
   
   var chosenDateRange = getDates()[0];
-  var startDate = getDates()[1];
-  var endDate = getDates()[2];
+  var startDate = Utilities.formatDate(getDates()[1], Session.getScriptTimeZone(),'yyyy-MM-dd');
+  var endDate = Utilities.formatDate(getDates()[2], Session.getScriptTimeZone(),'yyyy-MM-dd');
 
   var tableId  = 'ga:' + profileId;
   var metric = 'ga:visits';
