@@ -29,11 +29,13 @@ function calliTunes() {
 function calliTunes2() {
   
   // Call the iTunes API
-  var response = UrlFetchApp.fetch("https://itunes.apple.com/search?term=coldplay&limit=25");
+  var response = UrlFetchApp.fetch("https://itunes.apple.com/search?term=metallica&limit=200");
   
   // Parse the JSON reply
   var json = response.getContentText();
   var data = JSON.parse(json);
+  
+  Logger.log(data);
   //Logger.log(data["results"][0]);
   Logger.log(data["results"][0]["artistName"]);
   Logger.log(data["results"][0]["collectionName"]);
@@ -56,7 +58,7 @@ function calliTunes2() {
 function calliTunesAPI(artist) {
   
   // Call the iTunes API
-  var response = UrlFetchApp.fetch("https://itunes.apple.com/search?term=" + artist);
+  var response = UrlFetchApp.fetch("https://itunes.apple.com/search?term=" + artist + "&limit=200");
   
   // Parse the JSON reply
   var json = response.getContentText();
@@ -71,7 +73,7 @@ function displayArtistData() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
   
-  var artist = sheet.getRange(12,2).getValue();
+  var artist = sheet.getRange(11,2).getValue();
   
   var tracks = calliTunesAPI(artist);
   
@@ -81,24 +83,42 @@ function displayArtistData() {
   
   results.forEach(function(elem,i) {
     var image = '=image("' + elem["artworkUrl60"] + '",4,60,60)';
-    output.push([i+1,elem["artistName"],elem["collectionName"],elem["trackName"],image,elem["previewUrl"]]);
+    var hyperlink = '=hyperlink("' + elem["previewUrl"] + '","Listen to preview")';
+    output.push([elem["artistName"],elem["collectionName"],elem["trackName"],image,hyperlink]);
     sheet.setRowHeight(i+15,65);
   });
   
-  /*
-  var unique = output.filter(function(elem,i,self) {
-    return i == self.indexOf(elem);
+  // to do:
+  // sort by album
+  var sortedOutput = output.sort(function(a,b) {
+    //Logger.log(a[2]);
+    //Logger.log(b[2]);
+    if (a[1] < b[1]) {
+      return -1;
+    }
+    else if (a[1] > b[1]) {
+      return 1;
+    }
+    return 0;
   });
-  Logger.log(unique);
-  */
   
-  Logger.log(output);
   
-  var len = output.length;
+  // return > 50 results
+  
+  //Logger.log(sortedOutput);
+  
+  sortedOutput.forEach(function(elem,i) {
+    elem.unshift(i + 1);
+    Logger.log(elem);
+    Logger.log(i);
+  });
+  
+  
+  var len = sortedOutput.length;
   
   sheet.getRange(15,1,500,6).clearContent();
   
-  sheet.getRange(15,1,len,6).setValues(output);
+  sheet.getRange(15,1,len,6).setValues(sortedOutput);
   
   // formatting
   sheet.getRange(15,1,500,6).setVerticalAlignment("middle");
