@@ -1,3 +1,9 @@
+// GitHub API <> Google Sheets
+// currently just a straight http call
+// need to build authenticated version of app to get better rate limits
+//
+// read more about api here: https://developer.github.com/v3/
+
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Custom GitHub Menu')
@@ -65,7 +71,7 @@ function getUserRepos() {
   
   // To Do:
   // fetch only returns 30 repos at the moment. Collect more, or keep calling api until comes back with no extra repos
-
+  // https://developer.github.com/v3/#pagination
   
 }
 
