@@ -86,19 +86,44 @@ function getRepoLanguages() {
   var json = response.getContentText();
   var data = JSON.parse(json);
   
+  Logger.log(typeof json);  // object
   Logger.log(json);  //  {"Ruby":53927,"HTML":47401,"CSS":25427,"JavaScript":667}
-  
-  Logger.log(data);  // {CSS=25427, JavaScript=667, HTML=47401, Ruby=53927}
+  Logger.log(json["Ruby"]);
   
   Logger.log(typeof data);  // object
+  Logger.log(data);  // {CSS=25427, JavaScript=667, HTML=47401, Ruby=53927}
+  
+  
   
   var langs = [];
  
-  Object.keys(data).forEach(function(key,index) {
+  Object.keys(json).forEach(function(key,index) {
     langs.push([key,index]);
   });
   
   
+}
+
+
+function getGitHubRateLimit() {
+  
+  var response = UrlFetchApp.fetch("https://api.github.com/rate_limit");
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+  
+  Logger.log(json);
+  Logger.log(data["resources"]["core"]["reset"]);
+  
+  //{"resources":{"core":{"limit":60,"remaining":0,"reset":1486061428},"search":{"limit":10,"remaining":10,"reset":1486061134}},"rate":{"limit":60,"remaining":0,"reset":1486061428}}
+  
+  var resetTime = data["resources"]["core"]["reset"];
+  
+  Logger.log(time(resetTime));
+  
+}
+
+function time(ms) {
+    return new Date(ms).toLocaleString();
 }
 
 
