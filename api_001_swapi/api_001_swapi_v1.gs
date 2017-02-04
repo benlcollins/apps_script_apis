@@ -210,7 +210,8 @@ function allData() {
 function returnCatNames(category) {
     
   var names = [];
-    
+  
+  /*  
   for each (item in category) {
     var obj = {};
     names.push(item.name);
@@ -218,6 +219,14 @@ function returnCatNames(category) {
       //obj["url"] = item.url
       //);
   }
+  */
+  
+  category.forEach(function(elem) {
+    var obj = {};
+    names.push(elem.name);
+  });
+  
+  
   Logger.log(names);
   
   return names;

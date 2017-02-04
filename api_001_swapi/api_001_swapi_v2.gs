@@ -81,31 +81,29 @@ function swapiDetail() {
   
   // call the api to get back all the data for that category
   var catData = categoryData(category);
-  Logger.log(catData[1]);
-  var catNames = getCategoryNames(category,catData);
+  // Logger.log(catData[1]);
+  var catNames = getCategoryNames(category,catData);  // [[Alderaan], [Yavin IV], [Hoth], [Dagobah], [Bespin], [Endor], [Naboo], [Coruscant], [Kamino], [Geonosis]]
   
   // get the specific item chosen within this category
   var item = apiSheet.getRange(6,3).getValue();
   
+  var itemData;
+  
   // loop through category data until have match with the chosen item
-  Logger.log(catNames);
-  var idx = 0;
-  
-  for (var i = 0; i < catNames.length; i++) {
-    if (catNames[i][0] === item) {
-      idx = i;
+  catNames.forEach(function(elem,i) {
+    if (elem[0] === item) { 
+      itemData = catData[i];
     }
-  }
-  
-  var itemData = catData[idx];
+  });
   
   // call function to parse itemData and return selected data for that category item
   // data required will be depedent on category of item e.g. people v planets
   var itemDataForSheet = returnItemDetails(itemData,category);
   
   // paste into sheet, clear old details first
-  apiSheet.getRange(10,2,apiSheet.getLastRow(),2).clear();
-  apiSheet.getRange(10, 2, itemDataForSheet.length, 2).setValues(itemDataForSheet).setHorizontalAlignment("left");
+  apiSheet.getRange(10,2,apiSheet.getLastRow(),2).clearContent();
+  apiSheet.getRange(10, 2, itemDataForSheet.length, 2).setValues(itemDataForSheet);
+  apiSheet.getRange(10, 2, itemDataForSheet.length, 2).setBackground("black").setFontColor("#FFD966").setHorizontalAlignment("left");
   
 }
 
