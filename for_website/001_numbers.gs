@@ -6,6 +6,6 @@ function callNumbers() {
   
   var fact = response.getContentText();
   var sheet = SpreadsheetApp.getActiveSheet();
-  sheet.getRange(1,1).setValue([fact]);
+  sheet.getRange(sheet.getLastRow() + 1,1).setValue([fact]);
   
 }
