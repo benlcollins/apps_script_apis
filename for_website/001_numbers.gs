@@ -1,3 +1,10 @@
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Custom Numbers API Menu')
+      .addItem('Display random number fact','callNumbers')
+      .addToUi();
+}
+
 function callNumbers() {
   
   // Call the Numbers API for random math fact
