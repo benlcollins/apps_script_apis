@@ -47,13 +47,18 @@ function displayArtistData() {
   });
   
   // sort by album
-  var sortedOutput = output.sort(function(a,b) {
-    if (a[1] < b[1]) {
+  var sortedOutput = output.sort( function(a,b) {
+    
+    var albumA = (a[1]) ? 'Not Known' : a[1];
+    var albumB = (b[1]) ? 'Not Known' : b[1];
+    
+    if (albumA < albumB) {
       return -1;
     }
-    else if (a[1] > b[1]) {
+    else if (albumA > albumB) {
       return 1;
     }
+    // names are equal
     return 0;
   });
   
