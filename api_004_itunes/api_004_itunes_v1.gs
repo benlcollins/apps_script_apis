@@ -91,8 +91,8 @@ function displayArtistData() {
   // sort by album
   var sortedOutput = output.sort( function(a,b) {
     
-    var albumA = (a[1]) ? 'Not Known' : a[1];
-    var albumB = (b[1]) ? 'Not Known' : b[1];
+    var albumA = (a[1]) ? a[1] : 'Not known';
+    var albumB = (b[1]) ? b[1] : 'Not known';
     
     if (albumA < albumB) {
       return -1;
