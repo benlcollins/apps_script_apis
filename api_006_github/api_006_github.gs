@@ -8,6 +8,7 @@ function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Custom GitHub Menu')
       .addItem('Get User Repos','getUserRepos')
+      .addItem('Get Repo languages','getRepoLanguages')
       .addToUi();
 }
 
@@ -89,25 +90,29 @@ function getRepoLanguages() {
   var response = UrlFetchApp.fetch(baseURL + username + "/" + repoName + "/languages");
   
   // Parse the JSON reply
-  var json = response.getContentText();
-  var data = JSON.parse(json);
+  var json = response.getContentText();  // string
+  var data = JSON.parse(json);  // object
   
-  Logger.log(typeof json);  // object
+  Logger.log(typeof json);  // string
   Logger.log(json);  //  {"Ruby":53927,"HTML":47401,"CSS":25427,"JavaScript":667}
-  Logger.log(json["Ruby"]);
+  Logger.log(json["Ruby"]);  // undefined
   
   Logger.log(typeof data);  // object
   Logger.log(data);  // {CSS=25427, JavaScript=667, HTML=47401, Ruby=53927}
   
-  
+  // Browser.msgBox(data.Ruby);
   
   var langs = [];
- 
-  Object.keys(json).forEach(function(key,index) {
+  
+  Object.keys(data).forEach(function(key,index) {
     langs.push([key,index]);
   });
   
+  Logger.log(langs);  // [[Ruby, 0], [HTML, 1], [CSS, 2], [JavaScript, 3]]  <-- array of rows
   
+  sheet.getRange(9,1,500,2).clear();
+  
+  sheet.getRange(9,1,langs.length,2).setValues(langs);
 }
 
 
