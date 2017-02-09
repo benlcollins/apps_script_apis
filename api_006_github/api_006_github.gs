@@ -102,17 +102,15 @@ function getRepoLanguages() {
   
   // Browser.msgBox(data.Ruby);
   
-  var langs = [];
-  
-  Object.keys(data).forEach(function(key,index) {
-    langs.push([key,index]);
+  var langs = Object.keys(data).map(function(key,index) {
+    return [index,key,data[key]];
   });
   
-  Logger.log(langs);  // [[Ruby, 0], [HTML, 1], [CSS, 2], [JavaScript, 3]]  <-- array of rows
+  Logger.log(langs);  // [[0, Ruby, 53927], [1, HTML, 47401], [2, CSS, 25427], [3, JavaScript, 667]]  <-- array of rows
   
-  sheet.getRange(9,1,500,2).clear();
+  sheet.getRange(9,1,500,3).clear();
   
-  sheet.getRange(9,1,langs.length,2).setValues(langs);
+  sheet.getRange(9,1,langs.length,3).setValues(langs);
 }
 
 
