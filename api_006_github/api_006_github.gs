@@ -9,6 +9,7 @@ function onOpen() {
   ui.createMenu('Custom GitHub Menu')
       .addItem('Get User Repos','getUserRepos')
       .addItem('Get Repo languages','getRepoLanguages')
+      .addItem('Get GitHub Rate Limit','getGitHubRateLimit')
       .addToUi();
 }
 
@@ -83,7 +84,7 @@ function getRepoLanguages() {
   var sheet = ss.getSheetByName("Github dashboard");
   
   var username = sheet.getRange(3,2).getValue();
-  var repoName = sheet.getRange(5,2).getValue();
+  var repoName = sheet.getRange(4,2).getValue();
   
   var baseURL = "https://api.github.com/repos/";
   
@@ -102,15 +103,19 @@ function getRepoLanguages() {
   
   // Browser.msgBox(data.Ruby);
   
+  // create an array of index and key/value pairs
   var langs = Object.keys(data).map(function(key,index) {
-    return [index,key,data[key]];
+    return [index + 1,key,data[key]];
   });
   
   Logger.log(langs);  // [[0, Ruby, 53927], [1, HTML, 47401], [2, CSS, 25427], [3, JavaScript, 667]]  <-- array of rows
   
+  // clear any old repo language info
   sheet.getRange(9,1,500,3).clear();
   
+  // paste in the new repo language info
   sheet.getRange(9,1,langs.length,3).setValues(langs);
+  
 }
 
 
@@ -125,9 +130,16 @@ function getGitHubRateLimit() {
   
   //{"resources":{"core":{"limit":60,"remaining":0,"reset":1486061428},"search":{"limit":10,"remaining":10,"reset":1486061134}},"rate":{"limit":60,"remaining":0,"reset":1486061428}}
   
+  var callsRemaining = data["resources"]["core"]["remaining"];
   var resetTime = data["resources"]["core"]["reset"];
   
   Logger.log(time(resetTime));
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Github dashboard");
+  
+  var remainingCell = sheet.getRange(5,2).clear();
+  remainingCell.setValue(callsRemaining);
   
 }
 
