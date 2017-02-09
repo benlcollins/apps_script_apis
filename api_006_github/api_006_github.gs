@@ -116,6 +116,9 @@ function getRepoLanguages() {
   // paste in the new repo language info
   sheet.getRange(9,1,langs.length,3).setValues(langs);
   
+  // format the index column to be centre aligned
+  sheet.getRange(9,1,langs.length,1).setHorizontalAlignment('center');
+  
 }
 
 
@@ -139,7 +142,7 @@ function getGitHubRateLimit() {
   var sheet = ss.getSheetByName("Github dashboard");
   
   var remainingCell = sheet.getRange(5,2).clear();
-  remainingCell.setValue(callsRemaining);
+  remainingCell.setValue(callsRemaining).setHorizontalAlignment('center');
   
 }
 
