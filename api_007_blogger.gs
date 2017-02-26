@@ -1,5 +1,6 @@
 var CLIENT_ID = '...';
 var CLIENT_SECRET = '...';
+var BLOG_ID = '...';
 
 /*
  * Based on the following work by others;
@@ -14,6 +15,7 @@ function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Custom Blogger Menu')
       .addItem('Get Blogger Posts','getBloggerPosts')
+      .addItem('Publish post on Blogger','postToBlogger')
       .addToUi();
 }
 
@@ -95,7 +97,7 @@ function getBloggerSites() {
 // Step 2: get list of all posts for specific blogger site
 function getBloggerPosts() {
   var service = getBloggerService_();
-  var blogId = '4679573973485579295'; // the id for my blogger site Data Chops
+  var blogId = BLOG_ID; // the id for my blogger site Data Chops
   
   var api = 'https://www.googleapis.com/blogger/v3/blogs/' + blogId + '/posts';
   
@@ -121,13 +123,13 @@ function getBloggerPosts() {
   
   for (var i = 0; i < posts.length; i++) {
     var authorName = posts[i]["author"]["displayName"];
-    var authorImage = '=image("https:' + posts[i]["author"]["image"]["url"] + '",4,60,60)';
+    //var authorImage = '=image("https:' + posts[i]["author"]["image"]["url"] + '",4,60,60)';
     var publishedDate = posts[i]["published"];
     var publishedUrl = posts[i]["url"];
     var title = posts[i]["title"];
     //var content = posts[i]["content"];
   
-    postsArray.push([publishedDate,title,publishedUrl,authorName,authorImage/*,content*/]);
+    postsArray.push([publishedDate,title,publishedUrl,authorName/*,authorImage,content*/]);
   }
   
   Logger.log(postsArray);
@@ -143,11 +145,75 @@ function outputToSheet(post) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var publishedPosts = ss.getSheetByName('Published Posts');
   
-  publishedPosts.getRange(4,1,publishedPosts.getLastRow(),5).clearContent();
+  publishedPosts.getRange(4,1,publishedPosts.getLastRow(),4).clearContent();
   
-  var outputRange = publishedPosts.getRange(4,1,post.length,5).setValues(post);
+  var outputRange = publishedPosts.getRange(4,1,post.length,4).setValues(post);
   
+  /*
+  // only need this snippet of code when i'm including thumbnail author images
   for (var i = 0; i < post.length; i++) { 
     publishedPosts.setRowHeight(i + 4,65);
+  }
+  */
+}
+
+
+// posting blog post from google sheet to blogger
+// need to get the content from the sheet into suitable json format
+// then post to blogger
+function postToBlogger() {
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var toPublish = ss.getSheetByName('To Publish');
+  
+  var kind = toPublish.getRange(4,1).getValue();
+  var blogId = toPublish.getRange(4,2).getValue();
+  var title = toPublish.getRange(4,3).getValue();
+  var content = toPublish.getRange(4,4).getValue();
+  
+  var body = JSON.stringify({
+    'kind': kind,
+    'blog': {
+      'id': blogId
+    },
+    'title': title,
+    'content': content
+  });
+  
+  Logger.log(body);
+  
+  var service = getBloggerService_();
+  
+  if (service.hasAccess()) {
+    var api = 'https://www.googleapis.com/blogger/v3/blogs/' + blogId + '/posts/';
+    
+    var headers = {
+      'Authorization': 'Bearer ' + getBloggerService_().getAccessToken()
+    };
+    
+    var options = {
+      'headers': headers,
+      'method' : 'post',
+      'contentType': 'application/json',
+      'payload': body,
+      'muteHttpExceptions': true
+    };
+    
+    try {
+      var response = UrlFetchApp.fetch(api, options);
+      
+      var responseCode = response.getResponseCode();
+      Logger.log(responseCode);
+      var json = JSON.parse(response.getContentText());
+      Logger.log(json);
+    }
+    catch(err) {
+      Logger.log(err); // error with url fetch call
+    }
+  }
+  else {
+    var authorizationUrl = service.getAuthorizationUrl();
+    Logger.log('Open the following URL and re-run the script: %s',
+        authorizationUrl);
   }
 }
