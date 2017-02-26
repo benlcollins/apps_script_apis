@@ -9,6 +9,15 @@ var CLIENT_SECRET = '...';
  *
  **/
 
+// add custom menu
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Custom Blogger Menu')
+      .addItem('Get Blogger Posts','getBloggerPosts')
+      .addToUi();
+}
+
+
 
 // configure the service
 function getBloggerService_() {
@@ -23,7 +32,6 @@ function getBloggerService_() {
 }
 
 // Logs the redict URI to register
-// run this to get the necessary redirect URI for the OAuth
 function logRedirectUri() {
   var service = getBloggerService_();
   Logger.log(service.getRedirectUri());
@@ -41,9 +49,8 @@ function authCallback(request) {
   }
 }
 
-// call the blogger API
-// based on https://mashe.hawksey.info/2015/10/setting-up-oauth2-access-with-google-apps-script-blogger-api-example/
-function bloggerAPI() {
+// Step 1: call the blogger API and get list of blogger sites associated with this google account
+function getBloggerSites() {
   var service = getBloggerService_();
   
   if (service.hasAccess()) {
@@ -64,18 +71,83 @@ function bloggerAPI() {
     
     var json = JSON.parse(response.getContentText());
     
+    var bloggerIds = [];
+    
     for (var i in json.items) {
       Logger.log("%s %s", json.items[i].name, json.items[i].url); 
+      bloggerIds.push(json.items[i].id);
     }
+    Logger.log(bloggerIds);
+    //return bloggerIds;
   }
   else {
     Logger.log("App has no access yet.");
     
-    // this was the step I was missed originally
+    // this was the step I was missing originally
     // open this url to gain authorization from blogger
     var authorizationUrl = service.getAuthorizationUrl();
     Logger.log('Open the following URL and re-run the script: %s',
         authorizationUrl);
   }
+}
+
+
+// Step 2: get list of all posts for specific blogger site
+function getBloggerPosts() {
+  var service = getBloggerService_();
+  var blogId = '4679573973485579295'; // the id for my blogger site Data Chops
   
+  var api = 'https://www.googleapis.com/blogger/v3/blogs/' + blogId + '/posts';
+  
+  var headers = {
+    "Authorization": "Bearer " + getBloggerService_().getAccessToken()
+  };
+  
+  var options = {
+    "headers": headers,
+    "method" : "GET",
+    "muteHttpExceptions": true
+  };
+  
+  var response = UrlFetchApp.fetch(api, options);
+  
+  var json = JSON.parse(response.getContentText());
+  var posts = json["items"];
+  
+  Logger.log(posts.length); // result is 8, which matches the number of blog posts at http://datachops.blogspot.com/
+  //Logger.log(posts[0]);
+  
+  var postsArray = [];
+  
+  for (var i = 0; i < posts.length; i++) {
+    var authorName = posts[i]["author"]["displayName"];
+    var authorImage = '=image("https:' + posts[i]["author"]["image"]["url"] + '",4,60,60)';
+    var publishedDate = posts[i]["published"];
+    var publishedUrl = posts[i]["url"];
+    var title = posts[i]["title"];
+    //var content = posts[i]["content"];
+  
+    postsArray.push([publishedDate,title,publishedUrl,authorName,authorImage/*,content*/]);
+  }
+  
+  Logger.log(postsArray);
+  
+  outputToSheet(postsArray);
+  
+}
+
+
+// print out results to sheet
+function outputToSheet(post) {
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var publishedPosts = ss.getSheetByName('Published Posts');
+  
+  publishedPosts.getRange(4,1,publishedPosts.getLastRow(),5).clearContent();
+  
+  var outputRange = publishedPosts.getRange(4,1,post.length,5).setValues(post);
+  
+  for (var i = 0; i < post.length; i++) { 
+    publishedPosts.setRowHeight(i + 4,65);
+  }
 }
