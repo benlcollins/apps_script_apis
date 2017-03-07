@@ -46,4 +46,13 @@ function getListGrowth() {
   
   sheet.getRange(4,1,numRows,numCols).setValues(data);
   
+  for (var i = 0; i < numRows; i++) {
+    sheet.getRange(4+i,5).setFormulaR1C1('=iferror(R[0]C[-3] - R[-1]C[-3],0)');  // absolute monthly change in list
+    sheet.getRange(4+i,6).setFormulaR1C1('=iferror((R[0]C[-4] - R[-1]C[-4])/R[-1]C[-4],0)').setNumberFormat("0.00%");  // rate of change in list
+  }
+  
 }
+
+
+
+
