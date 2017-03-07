@@ -3,7 +3,6 @@
  * API experiments 2017 #002
  * Exploring the MailChimp API
  * Retrives MailChimp data and populates a Google Sheet
- * Drop-down menu controls for user to choose categories/items
  * 
  */
 
@@ -15,6 +14,7 @@ function onOpen() {
   ui.createMenu('MailChimp Menu')
     .addItem('Get campaign data', 'printMailChimpData')
     .addItem('Import emails', 'importEmailsMailChimp')
+    .addItem('List Growth Details','listGrowth')
     .addToUi();
 
 }
@@ -150,7 +150,7 @@ function mailchimp3() {
  */
 
 // generalized mailchimp api call
-function mailchimp4(endpoint) {
+function mailchimpEndpoint(endpoint) {
   
   // get mailchimp api key from properties service
   var apikey = getApiKey();
@@ -168,13 +168,17 @@ function mailchimp4(endpoint) {
     }
   };
   
+  Logger.log(root + path + query);
+  Logger.log(params);
+  
   // call the Mailchimp API
   var response = UrlFetchApp.fetch(root + path + query, params);
   var data = response.getContentText();
   var json = JSON.parse(data);
   
   // Return the JSON data
-  return json[endpoint];
+  //return json[endpoint];
+  return json;
 }
 
 
@@ -184,7 +188,8 @@ function getMailChimpCampaignData2() {
   // get mailchimp api key from properties service
   var apikey = getApiKey();
   
-  var campaigns = mailchimp4('campaigns');
+  var campaigns = mailchimpEndpoint('campaigns')['campaigns'];  
+  Logger.log(campaigns);
   
   var campaignData = [];
   
@@ -250,11 +255,11 @@ function printMailChimpData() {
 
 var data = [
   {
-    'email_address': 'benlcollins2@gmail.com',
+    'email_address': 'xxxxxxxxxxx@gmail.com',
     'status': 'subscribed'
   },
   { 
-    'email_address': 'benlcollins2@gmail.com',
+    'email_address': 'xxxxxxxxxxx@gmail.com',
     'status': 'subscribed'
   }
 ];
@@ -278,13 +283,14 @@ function getSubscribers() {
   
   /*
   emailsArray = [
-    {email_address=benlcollins2@gmail.com, status=subscribed}, 
-    {email_address=bcollins541@yahoo.com, status=subscribed}, 
-    {email_address=bcollins542@yahoo.com, status=subscribed}
+    {email_address=xxxxxxxxxxx@gmail.com, status=subscribed}, 
+    {email_address=xxxxxxxxxxx@yahoo.com, status=subscribed}, 
+    {email_address=xxxxxxxxxxx@yahoo.com, status=subscribed}
   ]
   */
   
   Logger.log(typeof emailsArray);
+  Logger.log(emailsArray);
   return emailsArray;
 }
 
@@ -306,9 +312,9 @@ function importEmailsMailChimp() {
  /*
   {
     "members": [
-      {"email_address":"benlcollins2@gmail.com","status":"subscribed"},
-      {"email_address":"bcollins541@yahoo.com","status":"subscribed"},
-      {"email_address":"bcollins542@yahoo.com","status":"subscribed"}
+      {email_address=xxxxxxxxxxx@gmail.com, status=subscribed}, 
+      {email_address=xxxxxxxxxxx@yahoo.com, status=subscribed}, 
+      {email_address=xxxxxxxxxxx@yahoo.com, status=subscribed}
     ]
   }
   */
@@ -342,8 +348,8 @@ function importEmailsMailChimp() {
   //Logger.log("this is it here:");
   //Logger.log(chimpLog);
   
-  // [Fri Jan 13 22:38:43 GMT-05:00 2017, 0, 0, 3, {email_address=benlcollins2@gmail.com, 
-  // error=benlcollins2@gmail.com is already a list member, do you want to update? please provide update_existing:true in the request body}]
+  // [Fri Jan 13 22:38:43 GMT-05:00 2017, 0, 0, 3, {email_address=xxxxxxxxxxx@gmail.com, 
+  // error=xxxxxxxxxxxx@gmail.com is already a list member, do you want to update? please provide update_existing:true in the request body}]
   
   printMailChimpLog(chimpLog);
   
@@ -418,7 +424,8 @@ function getMailChimpCampaignData1() {
   // get mailchimp api key from properties service
   var apikey = getApiKey();
   
-  var campaigns = mailchimp4('campaigns');
+  var campaigns = mailchimpEndpoint('campaigns')['campaigns'];
+  Logger.log(campaigns);
   
   //Logger.log(campaigns[15]);
   
