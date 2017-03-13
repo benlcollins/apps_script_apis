@@ -9,10 +9,8 @@
 var API_KEY = '';
 var LIST_ID = '';
 
-/** 
- * call the Mailchimip API to get campaign data
- * This gets all campaigns in an account
- */
+// call the Mailchimip API to get campaign data
+// This gets all campaigns in an account
 function mailchimpCampaign() {
   
   // URL and params for the Mailchimp API
@@ -28,30 +26,22 @@ function mailchimpCampaign() {
     }
   };
   
-  try {
-    // call the Mailchimp API
-    var response = UrlFetchApp.fetch(root+endpoint, params);
-    var data = response.getContentText();
-    var json = JSON.parse(data);
-    
-    Logger.log(json);
-
-    // get just campaign data
-    var campaigns = json['campaigns'];
-    
-    // Log the campaign stats
-    Logger.log("Number of campaigns: " + campaigns.length);
-    
-    // print out all the campaign headings
-    campaigns.forEach(function(campaign) {
-      Logger.log(campaign["settings"]["subject_line"]);
-    });
-
-  }
-  catch (error) {
-    // deal with any errors
-    Logger.log(error);
-  };
+  // call the Mailchimp API
+  var response = UrlFetchApp.fetch(root+endpoint, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
   
+  Logger.log(json);
+
+  // get just campaign data
+  var campaigns = json['campaigns'];
+  
+  // Log the campaign stats
+  Logger.log("Number of campaigns: " + campaigns.length);
+  
+  // print out all the campaign headings
+  campaigns.forEach(function(campaign) {
+    Logger.log(campaign["settings"]["subject_line"]);
+  });
   
 }
