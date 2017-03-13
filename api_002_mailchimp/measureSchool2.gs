@@ -91,12 +91,12 @@ function mailchimpCampaign() {
     var numCols = campaignData[0].length;
     
     // output the numbers to the sheet
-    sheet.getRange(7,1,numRows,numCols).setValues(campaignData);
+    sheet.getRange(4,1,numRows,numCols).setValues(campaignData);
     
     // adds formulas to calculate open rate and click rate
     for (var i = 0; i < numRows; i++) {
-      sheet.getRange(7+i,9).setFormulaR1C1('=iferror(R[0]C[-2]/R[0]C[-3]*100,"N/a")');
-      sheet.getRange(7+i,10).setFormulaR1C1('=iferror(R[0]C[-2]/R[0]C[-4]*100,"N/a")');
+      sheet.getRange(4+i,9).setFormulaR1C1('=iferror(R[0]C[-2]/R[0]C[-3]*100,"N/a")');
+      sheet.getRange(4+i,10).setFormulaR1C1('=iferror(R[0]C[-2]/R[0]C[-4]*100,"N/a")');
     }
     
   }
