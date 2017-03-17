@@ -1,3 +1,11 @@
+/*
+ * Script to extract names email and addresses for a specific label in Gmail
+ * Created by Ben Collins, March 2017
+ * Read more:
+ * http://www.benlcollins.com/apps-script/extract-email-from-gmail/
+ *
+ */
+
 // add menu to Sheet
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
