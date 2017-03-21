@@ -6,8 +6,7 @@
  * Step 1: Register for basic account (Free)
  * https://about.crunchbase.com/forms/apply-basic-access/
  *
- * Email support for user key if you don't have one:
- * api-basic@crunchbase.com
+ * Email support for user key if you don't get one
  *
  */
 
