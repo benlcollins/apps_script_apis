@@ -29,12 +29,8 @@ function getCrunchbasePeople() {
   
   // URL and params for the Crunchbase API
   var url = 'https://api.crunchbase.com/v/3/odm-people?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
-  //var url = 'https://api.crunchbase.com/v/3/products?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
-  
-  //Logger.log(url);
   
   var json = getCrunchbaseData(url,query);
-  //Logger.log(json);
   
   if (json[0] === "Error:") {
     // deal with error with fetch operation
@@ -49,7 +45,6 @@ function getCrunchbasePeople() {
     }
     else {
       var data = json[1].data.items[0].properties;
-      //Logger.log(data);
       
       // correct data comes back, parse into array for Google Sheet
       var outputData = [
@@ -90,10 +85,8 @@ function getCrunchbaseOrgs() {
   
   // URL and params for the Crunchbase API
   var url = 'https://api.crunchbase.com/v/3/odm-organizations?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
-  //Logger.log(url);
   
   var json = getCrunchbaseData(url,query);
-  //Logger.log(json);
   
   if (json[0] === "Error:") {
     // deal with error with fetch operation
