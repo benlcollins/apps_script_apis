@@ -1,9 +1,9 @@
 /*
  * Crunchbase API integration
  *
- * https://data.crunchbase.com/docs/using-the-api
+ * http://www.benlcollins.com/spreadsheets/google-sheets-crunchbase-api/
  *
- * Step 1: Register for basic account (Free)
+ * First step is to register for basic account (Free)
  * https://about.crunchbase.com/forms/apply-basic-access/
  *
  * Email support for user key if you don't get one
