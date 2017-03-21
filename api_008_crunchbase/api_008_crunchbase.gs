@@ -1,7 +1,7 @@
 /*
  * Crunchbase API integration
  *
- * http://www.benlcollins.com/apps-script/connecting-to-th…th-google-sheets/
+ * http://www.benlcollins.com/apps-script/crunchbase/
  *
  * First step is to register for basic account (Free)
  * https://about.crunchbase.com/forms/apply-basic-access/
