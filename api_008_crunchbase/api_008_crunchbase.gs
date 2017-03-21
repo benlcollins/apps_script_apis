@@ -29,46 +29,55 @@ function getCrunchbasePeople() {
   
   // URL and params for the Crunchbase API
   var url = 'https://api.crunchbase.com/v/3/odm-people?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
-  Logger.log(url);
+  //var url = 'https://api.crunchbase.com/v/3/products?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
+  
+  //Logger.log(url);
   
   var json = getCrunchbaseData(url,query);
+  //Logger.log(json);
   
-  if (json.length === 2) {
-    // deal with error
+  if (json[0] === "Error:") {
+    // deal with error with fetch operation
     sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
-    sheet.getRange(6,1,1,2).setValues([data]);
+    sheet.getRange(6,1,1,2).setValues([json]);
   }
   else {
-    var data = json.data.items[0].properties;
-    Logger.log(data);
-
-    // correct data comes back, parse into array for Google Sheet
-    var outputData = [
-      ["Name",data.first_name + ' ' + data.last_name],
-      ["Gender",data.gender],
-      ["Type",data.organization_name],
-      ["Short description",data.title],
-      ["Country",data.country_code],
-      ["Region",data.region_name],
-      ["Website url",data.homepage_url],
-      ["Facebook",data.facebook_url],
-      ["Linkedin",data.linkedin_url],
-      ["Twitter",data.twitter_url],
-      ["Crunchbase URL","https://www.crunchbase.com/" + data.web_path],
-      ["Crunchbase Organization URL","https://www.crunchbase.com/" + data.organization_web_path]
-    ];
-    
-    // clear any old data
-    sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
-    
-    // insert new data
-    sheet.getRange(6,1,12,2).setValues(outputData);
-    
-    // add image with formula and format that row
-    sheet.getRange(5,2).setFormula('=image("' + data.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
-    sheet.setRowHeight(5,60);
+    if (json[0] !== 200) {
+      // deal with error from api
+      sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
+      sheet.getRange(6,1,1,2).setValues([["Error, server returned code:",json[0]]]);
+    }
+    else {
+      var data = json[1].data.items[0].properties;
+      //Logger.log(data);
+      
+      // correct data comes back, parse into array for Google Sheet
+      var outputData = [
+        ["Name",data.first_name + ' ' + data.last_name],
+        ["Gender",data.gender],
+        ["Type",data.organization_name],
+        ["Short description",data.title],
+        ["Country",data.country_code],
+        ["Region",data.region_name],
+        ["Website url",data.homepage_url],
+        ["Facebook",data.facebook_url],
+        ["Linkedin",data.linkedin_url],
+        ["Twitter",data.twitter_url],
+        ["Crunchbase URL","https://www.crunchbase.com/" + data.web_path],
+        ["Crunchbase Organization URL","https://www.crunchbase.com/" + data.organization_web_path]
+      ];
+      
+      // clear any old data
+      sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
+      
+      // insert new data
+      sheet.getRange(6,1,12,2).setValues(outputData);
+      
+      // add image with formula and format that row
+      sheet.getRange(5,2).setFormula('=image("' + data.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
+      sheet.setRowHeight(5,60);
+    }
   }
-  
 }
 
 
@@ -81,48 +90,55 @@ function getCrunchbaseOrgs() {
   
   // URL and params for the Crunchbase API
   var url = 'https://api.crunchbase.com/v/3/odm-organizations?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
-  Logger.log(url);
+  //Logger.log(url);
   
   var json = getCrunchbaseData(url,query);
+  //Logger.log(json);
   
-  if (json.length === 2) {
-    // deal with error
+  if (json[0] === "Error:") {
+    // deal with error with fetch operation
     sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
-    sheet.getRange(6,1,1,2).setValues([data]);
+    sheet.getRange(6,1,1,2).setValues([json]);
   }
   else {
-    // correct data comes back, filter down to match the name of the entity
-    var data = json.data.items.filter(function(item) {
-      return item.properties.name == query;
-    })[0].properties;
-    
-    // parse into array for Google Sheet
-    var outputData = [
-      ["Name",data.name],
-      ["Homepage",data.homepage_url],
-      ["Type",data.primary_role],
-      ["Short description",data.short_description],
-      ["Country",data.country_code],
-      ["Region",data.region_name],
-      ["City name",data.city_name],
-      ["Blog url",data.blog_url],
-      ["Facebook",data.facebook_url],
-      ["Linkedin",data.linkedin_url],
-      ["Twitter",data.twitter_url],
-      ["Crunchbase URL","https://www.crunchbase.com/" + data.web_path]
-    ];
-    
-    // clear any old data
-    sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
-    
-    // insert new data
-    sheet.getRange(6,1,12,2).setValues(outputData);
-    
-    // add image with formula and format that row
-    sheet.getRange(5,2).setFormula('=image("' + data.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
-    sheet.setRowHeight(5,60);
+    if (json[0] !== 200) {
+      // deal with error from api
+      sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
+      sheet.getRange(6,1,1,2).setValues([["Error, server returned code:",json[0]]]);
+    }
+    else {
+      // correct data comes back, filter down to match the name of the entity
+      var data = json[1].data.items.filter(function(item) {
+        return item.properties.name == query;
+      })[0].properties;
+      
+      // parse into array for Google Sheet
+      var outputData = [
+        ["Name",data.name],
+        ["Homepage",data.homepage_url],
+        ["Type",data.primary_role],
+        ["Short description",data.short_description],
+        ["Country",data.country_code],
+        ["Region",data.region_name],
+        ["City name",data.city_name],
+        ["Blog url",data.blog_url],
+        ["Facebook",data.facebook_url],
+        ["Linkedin",data.linkedin_url],
+        ["Twitter",data.twitter_url],
+        ["Crunchbase URL","https://www.crunchbase.com/" + data.web_path]
+      ];
+      
+      // clear any old data
+      sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
+      
+      // insert new data
+      sheet.getRange(6,1,12,2).setValues(outputData);
+      
+      // add image with formula and format that row
+      sheet.getRange(5,2).setFormula('=image("' + data.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
+      sheet.setRowHeight(5,60);
+    }
   }
-  
 }
 
 
@@ -132,14 +148,12 @@ function getCrunchbaseData(url,query) {
   try {
     var response = UrlFetchApp.fetch(url); // POST emails to mailchimp
     var responseData = response.getContentText();
+    var responseCode = response.getResponseCode();
     var json = JSON.parse(responseData);
-    return json;
+    return [responseCode,json];
   }
   catch (e) {
     Logger.log(e);
     return ["Error:", e];
-  }
-  
+  }  
 }
-
-
