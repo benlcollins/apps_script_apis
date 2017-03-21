@@ -13,7 +13,6 @@
 
 var USER_KEY = 'Put your API user key in here';
 
-
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('Crunchbase Data')
@@ -22,11 +21,59 @@ function onOpen() {
     .addToUi();
 }
 
-function getCrunchbasePeople() {
 
+// function to retrive people data
+function getCrunchbasePeople() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('People');
+  var query = sheet.getRange(3,2).getValue();
+  
+  // URL and params for the Crunchbase API
+  var url = 'https://api.crunchbase.com/v/3/odm-people?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
+  Logger.log(url);
+  
+  var json = getCrunchbaseData(url,query);
+  
+  if (json.length === 2) {
+    // deal with error
+    sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
+    sheet.getRange(6,1,1,2).setValues([data]);
+  }
+  else {
+    var data = json.data.items[0].properties;
+    Logger.log(data);
+
+    // correct data comes back, parse into array for Google Sheet
+    var outputData = [
+      ["Name",data.first_name + ' ' + data.last_name],
+      ["Gender",data.gender],
+      ["Type",data.organization_name],
+      ["Short description",data.title],
+      ["Country",data.country_code],
+      ["Region",data.region_name],
+      ["Website url",data.homepage_url],
+      ["Facebook",data.facebook_url],
+      ["Linkedin",data.linkedin_url],
+      ["Twitter",data.twitter_url],
+      ["Crunchbase URL","https://www.crunchbase.com/" + data.web_path],
+      ["Crunchbase Organization URL","https://www.crunchbase.com/" + data.organization_web_path]
+    ];
+    
+    // clear any old data
+    sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
+    
+    // insert new data
+    sheet.getRange(6,1,12,2).setValues(outputData);
+    
+    // add image with formula and format that row
+    sheet.getRange(5,2).setFormula('=image("' + data.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
+    sheet.setRowHeight(5,60);
+  }
+  
 }
 
 
+// function to retrive organizations data
 function getCrunchbaseOrgs() {
   
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -37,30 +84,33 @@ function getCrunchbaseOrgs() {
   var url = 'https://api.crunchbase.com/v/3/odm-organizations?query=' + encodeURI(query) + '&user_key=' + USER_KEY;
   Logger.log(url);
   
-  var data = getCrunchbaseData(url,query);
+  var json = getCrunchbaseData(url,query);
   
-  Logger.log(data);
-  Logger.log(data.length); // 1 or 2 if error
-  
-  if (data.length === 2) {
+  if (json.length === 2) {
     // deal with error
     sheet.getRange(5,1,sheet.getLastRow(),2).clearContent();
     sheet.getRange(6,1,1,2).setValues([data]);
   }
   else {
-    // correct data comes back, parse into array for Google Sheet
+    // correct data comes back, filter down to match the name of the entity
+    var data = json.data.items.filter(function(item) {
+      return item.properties.name == query;
+    })[0].properties;
+    
+    // parse into array for Google Sheet
     var outputData = [
-      ["Name",data[0].properties.name],
-      ["Homepage",data[0].properties.homepage_url],
-      ["Type",data[0].properties.primary_role],
-      ["Short description",data[0].properties.short_description],
-      ["Country",data[0].properties.country_code],
-      ["Region",data[0].properties.region_name],
-      ["City name",data[0].properties.city_name],
-      ["Blog url",data[0].properties.blog_url],
-      ["Facebook",data[0].properties.facebook_url],
-      ["Linkedin",data[0].properties.linkedin_url],
-      ["Twitter",data[0].properties.twitter_url]
+      ["Name",data.name],
+      ["Homepage",data.homepage_url],
+      ["Type",data.primary_role],
+      ["Short description",data.short_description],
+      ["Country",data.country_code],
+      ["Region",data.region_name],
+      ["City name",data.city_name],
+      ["Blog url",data.blog_url],
+      ["Facebook",data.facebook_url],
+      ["Linkedin",data.linkedin_url],
+      ["Twitter",data.twitter_url],
+      ["Crunchbase URL","https://www.crunchbase.com/" + data.web_path]
     ];
     
     // clear any old data
@@ -70,27 +120,21 @@ function getCrunchbaseOrgs() {
     sheet.getRange(6,1,12,2).setValues(outputData);
     
     // add image with formula and format that row
-    sheet.getRange(5,2).setFormula('=image("' + data[0].properties.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
+    sheet.getRange(5,2).setFormula('=image("' + data.profile_image_url + '",4,50,50)').setHorizontalAlignment("center");
     sheet.setRowHeight(5,60);
   }
   
 }
 
 
-
+// general query to call Crunchbase API
 function getCrunchbaseData(url,query) {
     
   try {
     var response = UrlFetchApp.fetch(url); // POST emails to mailchimp
     var responseData = response.getContentText();
     var json = JSON.parse(responseData);
-    
-    // filter down to match the name of the entity
-    var data = json.data.items.filter(function(item) {
-      return item.properties.name == query;
-    });
-    
-    return data;
+    return json;
   }
   catch (e) {
     Logger.log(e);
