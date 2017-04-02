@@ -1,3 +1,7 @@
+// Ejunkie can send an HTTP POST data to a common notification url
+// Apps Script can receive the POST request and output data to sheet
+// Read more here: http://www.e-junkie.com/ej/help.integration.htm
+
 function doPost(e) {
 
   if(typeof e !== 'undefined') 
