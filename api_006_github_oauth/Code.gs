@@ -3,16 +3,17 @@ function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Custom GitHub Menu')
       .addItem('Get User Repos','getUserRepos')
+      .addItem('Get repo commit statistics...','getGitHubStatistics')
+      .addItem('Get rate quota','getGitHubRateLimit')
       .addToUi();
 }
 
-// TO DO:
-// DRY - make a general function for calling the api
 
-// other endpoints to try:
 // https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository
 // https://developer.github.com/v3/repos/statistics/#get-the-last-year-of-commit-activity-data
 
+// TO DO:
+// DRY - make a general function for calling the api
 
 
 /***************************************/
@@ -97,6 +98,8 @@ function getGitHubStatistics() {
     
     Logger.log(json);
     
+    outputWeeklyCommitStats(json);
+    
   }
   else {
     Logger.log("App has no access yet.");
@@ -106,6 +109,56 @@ function getGitHubStatistics() {
     Logger.log("Open the following URL and re-run the script: %s",
         authorizationUrl);
   }
+}
+
+
+function outputWeeklyCommitStats (data) {
+  
+  var outputArray = [];
+  
+  data.forEach(function(item,i) {
+    var tempDaysArray = [];
+    item.days.forEach(function(day) {
+      tempDaysArray.push(day);
+    })
+    outputArray.push(tempDaysArray);
+  });
+  
+  var newOutputArray = outputArray[0].map(function(col, i) {
+    return outputArray.map(function(row) {
+      return row[i];
+    });
+  });
+  
+  Logger.log(newOutputArray);
+  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Data');
+  /*
+  var testArray = [[0, 0, 0, 4, 3, 0, 0], 
+                   [0, 8, 0, 0, 3, 0, 0], 
+                   [1, 0, 0, 4, 3, 2, 0]];
+  
+  Logger.log(testArray[0]);
+  
+  var newTestArray = testArray[0].map(function(col, i) {
+    return testArray.map(function(row) {
+      return row[i];
+    });
+  });
+  
+  Logger.log(newTestArray);
+  
+  var testArray2 = [[0,0,1],
+                    [0,8,9],
+                    [0,0,0],
+                    [4,0,4],
+                    [3,3,3],
+                    [0,0,2],
+                    [0,0,0]];
+  */
+  sheet.getRange(4,2,7,52).setValues(newOutputArray);
+  
 }
 
 
