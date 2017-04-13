@@ -42,5 +42,5 @@ function doPost(e) {
     sheet.appendRow(outputArray);
   }
   
-  return ContentService.createTextOutput(JSON.stringify(e));
+  return;
 }
