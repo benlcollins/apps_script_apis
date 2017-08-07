@@ -14,27 +14,6 @@ function onOpen() {
 }
 
 
-function callGitHub() {
-  
-  // Call the GitHub API with username
-  var response = UrlFetchApp.fetch("https://api.github.com/users/benlcollins");
-  //Logger.log(response.getContentText());
-  
-  // Call the GitHub API with username repos
-  var repos = UrlFetchApp.fetch("https://api.github.com/users/benlcollins/repos");
-  //Logger.log(repos.getContentText());
-  
-  // Call the GitHub API with username with specific repo
-  var githubViz = UrlFetchApp.fetch("https://api.github.com/repos/benlcollins/github_api_viz");
-  //Logger.log(githubViz.getContentText());
-  
-  // Call the GitHub API with username with specific repo languages
-  var languages = UrlFetchApp.fetch("https://api.github.com/repos/benlcollins/github_api_viz/languages");
-  Logger.log(languages.getContentText());
-  
-}
-
-
 // get all the repos for username in google sheet
 // cycle through, print out the repo names in sheet
 // make into a drop down menu
@@ -58,9 +37,6 @@ function getUserRepos() {
   var json = response.getContentText();
   var data = JSON.parse(json);
   
-  //Logger.log(data.length);  // 27
-  //Logger.log(data[0]);
-  
   var repoNames = [];
   
   data.forEach(function(elem) {
@@ -70,10 +46,6 @@ function getUserRepos() {
   Logger.log(repoNames);
   
   workings.getRange(1,1,repoNames.length,1).setValues(repoNames);
-  
-  // To Do:
-  // fetch only returns 30 repos at the moment. Collect more, or keep calling api until comes back with no extra repos
-  // https://developer.github.com/v3/#pagination
   
 }
 
@@ -100,8 +72,6 @@ function getRepoLanguages() {
   
   Logger.log(typeof data);  // object
   Logger.log(data);  // {CSS=25427, JavaScript=667, HTML=47401, Ruby=53927}
-  
-  // Browser.msgBox(data.Ruby);
   
   // create an array of index and key/value pairs
   var langs = Object.keys(data).map(function(key,index) {
