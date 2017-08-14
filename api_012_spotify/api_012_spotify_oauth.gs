@@ -10,6 +10,7 @@ function getSpotifyService_() {
     .setClientSecret(CLIENT_SECRET)
     .setCallbackFunction('authCallback')
     .setPropertyStore(PropertiesService.getUserProperties())
+    .setScope('user-library-read');
 }
 
 // Logs the redict URI to register
@@ -30,3 +31,7 @@ function authCallback(request) {
     return HtmlService.createHtmlOutput('Denied. You can close this tab');
   }
 }
+
+// {images=[], followers={total=2, href=null}, href=https://api.spotify.com/v1/users/benlcollins, 
+// id=benlcollins, display_name=null, type=user, external_urls={spotify=https://open.spotify.com/user/benlcollins}, 
+// uri=spotify:user:benlcollins}

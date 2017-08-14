@@ -1,4 +1,4 @@
-// Get spotify user data
+// Get Rate limit
 function getSpotifyData() {
   // set up the service
   var service = getSpotifyService_();
@@ -7,7 +7,8 @@ function getSpotifyData() {
     Logger.log("App has access.");
     
     var base = "https://api.spotify.com";
-    var endpoint = "/v1/me";
+    //var endpoint = "/v1/me";
+    var endpoint = "/v1/me/tracks";
     
     var headers = {
       "Authorization": "Bearer " + getSpotifyService_().getAccessToken()
@@ -22,6 +23,7 @@ function getSpotifyData() {
     var response = JSON.parse(UrlFetchApp.fetch(base + endpoint, options));
     
     Logger.log(response);
+    // {error={message=Insufficient client scope, status=403}}
     
   }
   else {
