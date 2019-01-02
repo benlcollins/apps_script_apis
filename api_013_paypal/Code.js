@@ -1,14 +1,62 @@
 /**
+ * Add custom menu
+ */
+function onOpen() {
+  SpreadsheetApp.getUi()
+      .createMenu('PayPal App')
+      .addItem('Import Transactions', 'postTransactionsToSheet')
+      .addToUi();
+}
+
+/**
  * paste transaction data into Google Sheet
  */
 function postTransactionsToSheet() {
 
+	// empty array to hold data for Sheet
+	var allData = [];
+
+	// get transactions
 	var transactionData = getTransactions().transaction_details;
 	//Logger.log(transactionData);
 
 	transactionData.forEach(function(transaction) {
 		Logger.log(transaction);
-	})
+
+		var row = [];
+		var info = transaction.transaction_info;
+		var transaction_id = info.transaction_id;
+		var transaction_value = info.transaction_amount.value;
+		var transaction_currency = info.transaction_amount.currency_code;
+		var transaction_note = info.transaction_note ? info.transaction_note : 'N/a';
+		var transaction_subject = info.transaction_subject ? info.transaction_subject : 'N/a';
+		var ending_balance_value = info.ending_balance.value;
+		var transaction_date = info.transaction_initiation_date;
+
+		row.push(
+			transaction_id,
+			transaction_date,
+			transaction_value,
+			transaction_currency,
+			transaction_note,
+			transaction_subject,
+			ending_balance_value			
+		);
+
+		allData.push(row);
+
+	});
+
+	Logger.log(allData);
+
+	// get spreadsheet
+	var ss = SpreadsheetApp.getActiveSpreadsheet();
+	var sheet = ss.getSheetByName('Sheet1');
+
+	// range to paste data
+	var range = sheet.getRange(2,1,allData.length,7);
+
+	range.setValues(allData);
 
 }
 
