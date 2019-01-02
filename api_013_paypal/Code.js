@@ -54,7 +54,7 @@ function postTransactionsToSheet() {
 	var sheet = ss.getSheetByName('Sheet1');
 
 	// range to paste data
-	var range = sheet.getRange(2,1,allData.length,7);
+	var range = sheet.getRange(sheet.getLastRow() + 1,1,allData.length,7);
 
 	range.setValues(allData);
 
@@ -69,8 +69,8 @@ function getTransactions() {
 	var access_token = getAccessToken();
 
 	var transactionBase = 'https://api.paypal.com/v1/reporting/transactions';
-	var startDate = '2018-11-01T00:00:00-0700';
-	var endDate = '2018-11-30T23:59:59-0700';
+	var startDate = '2019-01-01T00:00:00-0700';
+	var endDate = '2019-01-31T23:59:59-0700';
 	var transactionEndpoint = transactionBase + '?start_date=' + startDate + '&end_date=' + endDate;
 
 	var head = {
