@@ -1,6 +1,10 @@
 /**
  * access client ID and client secret from user properties
  */
+// first time running script, need to add the client id and secret to user properties
+// var CLIENT_ID = '...';
+// var CLIENT_SECRET = '...';
+// thereafter, access them from user properties
 var CLIENT_ID = getUserProperty('CLIENT_ID');
 var CLIENT_SECRET = getUserProperty('CLIENT_SECRET');
  
